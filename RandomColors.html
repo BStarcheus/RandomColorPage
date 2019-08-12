@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <style>
+        .color {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="color"></div>
+
+    <script>
+        var colorDiv = document.getElementsByClassName("color")[0];
+
+        var isMouseListening = false;
+        var mx, my;
+
+        // The RGB values of the background
+        var a = Math.round(Math.random() * 255),
+            b = Math.round(Math.random() * 255),
+            c = Math.round(Math.random() * 255);
+        var a2 = Math.round(Math.random() * 255),
+            b2 = Math.round(Math.random() * 255),
+            c2 = Math.round(Math.random() * 255);
+
+        // The direction the current RGB values are travelling
+        // -1 is decreasing, 1 is increasing
+        var dirA = Math.round(Math.random());
+        dirA = dirA - (1 - dirA);
+        var dirB = Math.round(Math.random());
+        dirB = dirB - (1 - dirB);
+        var dirC = Math.round(Math.random());
+        dirC = dirC - (1 - dirC);
+
+        var dirA2 = Math.round(Math.random());
+        dirA2 = dirA2 - (1 - dirA2);
+        var dirB2 = Math.round(Math.random());
+        dirB2 = dirB2 - (1 - dirB2);
+        var dirC2 = Math.round(Math.random());
+        dirC2 = dirC2 - (1 - dirC2);
+
+        //The next value the R, G, or B value will change directions at
+        var changeDirA = Math.round(Math.random() * 255),
+            changeDirB = Math.round(Math.random() * 255),
+            changeDirC = Math.round(Math.random() * 255);
+        var changeDirA2 = Math.round(Math.random() * 255),
+            changeDirB2 = Math.round(Math.random() * 255),
+            changeDirC2 = Math.round(Math.random() * 255);
+
+
+        var startTime = new Date().getTime();
+
+        function changeColor() {
+            var newTime = new Date().getTime();
+            //Speed of color changing
+            if (newTime - startTime > 3) {
+
+                //Randomly choose which value to change on this run
+                var x = Math.round(Math.random() * 2);
+
+                if (x === 0) {
+                    a += dirA;
+                    a2 += dirA2;
+                } else if (x === 1) {
+                    b += dirB;
+                    b2 += dirB2;
+                } else if (x === 2) {
+                    c += dirC;
+                    c2 += dirC2;
+                }
+
+                //Change directions
+                if (a === 0 || a === 255 || a === changeDirA) {
+                    dirA *= -1;
+                    a += dirA;
+                    do {
+                        changeDirA = Math.round(Math.random() * 255);
+                    } while (a === changeDirA);
+                }
+                if (b === 0 || b === 255 || b === changeDirB) {
+                    dirB *= -1;
+                    b += dirB;
+                    do {
+                        changeDirB = Math.round(Math.random() * 255);
+                    } while (b === changeDirB);
+                }
+                if (c === 0 || c === 255 || c === changeDirC) {
+                    dirC *= -1;
+                    c += dirC;
+                    do {
+                        changeDirC = Math.round(Math.random() * 255);
+                    } while (c === changeDirC);
+                }
+
+                if (a2 === 0 || a2 === 255 || a2 === changeDirA2) {
+                    dirA2 *= -1;
+                    a2 += dirA2;
+                    do {
+                        changeDirA2 = Math.round(Math.random() * 255);
+                    } while (a2 === changeDirA2);
+                }
+                if (b2 === 0 || b2 === 255 || b2 === changeDirB2) {
+                    dirB2 *= -1;
+                    b2 += dirB2;
+                    do {
+                        changeDirB2 = Math.round(Math.random() * 255);
+                    } while (b2 === changeDirB2);
+                }
+                if (c2 === 0 || c2 === 255 || c2 === changeDirC2) {
+                    dirC2 *= -1;
+                    c2 += dirC2;
+                    do {
+                        changeDirC2 = Math.round(Math.random() * 255);
+                    } while (c2 === changeDirC2);
+                }
+
+
+                if (isMouseListening) {
+                    //Gradient mouse follower
+                    colorDiv.style.background = "radial-gradient(at " + mx + "px " + my + "px, rgb("
+                    + a2 + ", " + b2 + ", " + c2 + "), rgb("
+                    + a + ", " + b + ", " + c + "))";
+                } else {
+                    //Whole page is single color
+                    colorDiv.style.backgroundColor = "rgb(" + a + ", " + b + ", " + c + ")";
+                }
+
+/*    Uncomment for debugging text
+                if (a > 150 || b > 150 || c > 150) {
+                    colorDiv.style.color = 'black';
+                } else {
+                    colorDiv.style.color = 'white';
+                }
+
+                colorDiv.innerHTML = a + '<br>' + b + '<br>' + c + '<br><br><br>'
+                                    + dirA + ' ' + dirB + ' ' + dirC + '<br><br>'
+                                    + changeDirA + ' ' + changeDirB + ' ' + changeDirC;
+*/
+
+                startTime = new Date().getTime();
+            }
+            window.requestAnimationFrame(changeColor);
+        }
+        changeColor();
+
+        //Update mouse location
+        function onMouseMove(e) {
+            mx = e.clientX;
+            my = e.clientY;
+        }
+
+        //Change mode to gradient mouse follower, or back to solid color
+        function changeMouseListening() {
+            if (isMouseListening) {
+                colorDiv.removeEventListener('mousemove', onMouseMove);
+                colorDiv.style.background = "";
+            } else {
+                colorDiv.addEventListener('mousemove', onMouseMove);
+            }
+            isMouseListening = !isMouseListening;
+        }
+        colorDiv.addEventListener('click', changeMouseListening);
+
+    </script>
+</body>
+</html>
